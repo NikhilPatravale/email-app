@@ -1,0 +1,13 @@
+.quill{
+    margin-top: 15px;
+    height: 65%;
+}
+
+.quill::-webkit-scrollbar{
+    width: 5px;
+}
+
+.ql-container{
+    height: 85% !important;
+    border-top: 1px solid gray;
+}
