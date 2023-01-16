@@ -1,6 +1,18 @@
+@media (width < 840px){
+    .ql-container{
+        height: 77% !important;
+    }
+}
+
+@media (width > 840px){
+    .ql-container{
+        height: 85% !important;
+    }
+}
+
 .quill{
-    margin-top: 15px;
-    height: 65%;
+    margin-top: 5px;
+    height: 58%;
 }
 
 .quill::-webkit-scrollbar{
@@ -8,6 +20,6 @@
 }
 
 .ql-container{
-    height: 85% !important;
+    /* height: 85% !important; */
     border-top: 1px solid gray;
 }

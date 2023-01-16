@@ -3,6 +3,7 @@ const dotenv = require('dotenv')
 const mongoose = require('mongoose')
 const userRoute = require('./routes/Users')
 const messageRoute = require("./routes/Messages")
+const cors = require('cors')
 
 dotenv.config()
 
@@ -15,6 +16,7 @@ mongoose.connect(process.env.MONGO_URL, (err) => {
 })
 
 app.use(express.json())
+app.use(cors())
 
 app.get("/", (req, res) => {
     res.send("Welcome to your server")

@@ -23,7 +23,7 @@ function Sidebar(props) {
 
   return (
     <>
-      <Stack sx={{ flex: 1, position: 'relative', display: { xxxs: 'none', md: "flex", justifyContent:'space-between', minHeight: '598px'} }}>
+      <Stack sx={{ flex: 1, position: 'relative', display: { xxxs: 'none', md: "flex", justifyContent:'space-between', minHeight: '510px'} }}>
         <List disablePadding>
           {
             SidebarOptions.map((item, indx) => (

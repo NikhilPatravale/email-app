@@ -23,3 +23,5 @@ export const FeedConstants = {
 }
 
 export const SidebarOptions = ['Inbox', 'Sent', 'Drafts', 'Deleted', 'Spam']
+
+export const BASE_URL = "http://localhost:8200/email/api/"

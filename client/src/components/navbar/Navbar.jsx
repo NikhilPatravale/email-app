@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 
 function Navbar(props) {
     const {isSidebarClose, closeSidebar} = props
-    console.log(props)
+    
     return (
         <AppBar position='sticky' color='primary' sx={{height: '50px', justifyContent: 'center'}}>
             <Toolbar sx={{ justifyContent: 'space-between', alignItems: 'center' }}>

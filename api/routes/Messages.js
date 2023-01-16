@@ -13,17 +13,25 @@ router.post("/", async (req, res) => {
     }
 })
 
-router.get("/inbox/:empId", async (req, res) => {
+router.get("/:empId", async (req, res) => {
     try{
         const id = Number(req.params.empId)
         const user = await UserModel.findOne({empId: id})
         console.log(user)
-        const messages = await MessageModel.find({
+        let inbox = await MessageModel.find({
             to: { $in: [user.email]}
         })
+        inbox = inbox.filter( message => !message.deleted)
+        let sent = await MessageModel.find({
+            sender: user.email
+        })
+        sent = sent.filter( message => !message.deleted)
 
-        return res.status(200).json(messages)
+        return res.status(200).json({
+            inbox, sent
+        })
     }catch(err){
+        console.log(err)
         res.status(500).json(err)
     }
 })

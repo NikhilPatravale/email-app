@@ -1,20 +1,24 @@
-import { Avatar, Divider, List, ListItem, ListItemButton, ListItemAvatar, ListItemText, Stack, Typography } from '@mui/material'
+import { Avatar, Divider, List, ListItem, ListItemButton, ListItemAvatar, ListItemText, Stack, Typography, Box } from '@mui/material'
 import React from 'react'
 import { connect } from 'react-redux'
 import { setSelectedMessage } from '../../redux/actions/FeedActions'
 import DummyData from '../../static/dummy.json'
+import useFetchList from '../../hooks/useFetchList'
 
 
 function Feed(props) {
-  const { heading, feeds, setSelectedMessage } = props
+  const { heading, setSelectedMessage, messages, sidebar } = props
+  const { selectedOption } = sidebar
+
+  const list = useFetchList(selectedOption, messages)
 
   return (
-    <Stack sx={{ flex: 2, paddingLeft: '5px' }}>
+    <Stack sx={{ flex: 2, paddingLeft: '5px', minHeight: '510px' }}>
       <Typography variant='h6'>{heading?.slice(0, 1).toUpperCase() + heading?.slice(1)}</Typography>
-      <List disablePadding sx={{ overflowY: 'scroll' }}>
+      <List disablePadding sx={{ overflowY: 'auto' }}>
         {
-          feeds.map((item, indx) => {
-            return <>
+          list?.map((item, indx) => {
+            return <Box key={indx}>
               <ListItemButton sx={{ padding: 0 }} >
                 <ListItem disablePadding sx={{ cursor: 'pointer', paddingRight: '5px' }} onClick={() => setSelectedMessage(item)}>
                   <ListItemAvatar>
@@ -34,7 +38,7 @@ function Feed(props) {
                 </ListItem>
               </ListItemButton>
               {indx !== DummyData.length - 1 ? <Divider /> : null}
-            </>
+            </Box>
           })
         }
       </List>
@@ -44,11 +48,13 @@ function Feed(props) {
 
 const mapStateToProps = (state) => ({
   heading: state.feed.header,
-  feeds: state.feed.list
+  feeds: state.feed.list,
+  messages: state.messages,
+  sidebar: state.sidebar
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  setSelectedMessage: (message) => dispatch(setSelectedMessage(message))
+  setSelectedMessage: (message) => dispatch(setSelectedMessage(message)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Feed)
