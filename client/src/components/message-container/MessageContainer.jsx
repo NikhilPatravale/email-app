@@ -10,8 +10,8 @@ function MessageContainer(props) {
   return (
     <Box className='messageContainer' sx={{ flex: 3, maxWidth:'48%', minHeight: '490px', display: { xxxs: 'none', sm: 'block', alignSelf: 'start', padding: "10px 10px 10px 15px" } }}>
       {
-        newMessage ? <NewMessage /> :
-        message ? <Card sx={{ height: '100%', padding: 1 }}>
+        newMessage?.type ? <NewMessage /> :
+        message ? <Card sx={{ height: '471px', padding: 1 }}>
           <Typography variant='h6' sx={{ paddingLeft: 1, fontWeight: 550 }}>{message.subject}</Typography>
           <CardHeader
             avatar={
@@ -37,7 +37,7 @@ function MessageContainer(props) {
             }
             sx={{ padding: 1 }}
           />
-          <CardContent sx={{ padding: 1 }}>{message.body}</CardContent>
+          <CardContent sx={{ padding: 1, overflow:'auto', height:'371px', paddingBottom: '8px !important'}}>{message.body}</CardContent>
         </Card> : <Paper sx={{ height: '470px', display: 'flex', flexDirection: 'column', padding: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Email sx={{ height: '50px', width: '50px' }} />
           <Typography variant='h6'>No meessage selected</Typography>

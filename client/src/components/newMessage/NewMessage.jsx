@@ -1,10 +1,13 @@
-import { Button, FormControl, IconButton, InputLabel, MenuItem, Paper, Select, styled, TextField } from '@mui/material'
+import { Box, Button, Modal, Paper, styled, TextField, Typography } from '@mui/material'
 import { Stack } from '@mui/system';
 import { Delete, Send } from '@mui/icons-material'
-import React, { useEffect } from 'react';
-import { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { connect } from 'react-redux'
+import { createMessage, getMessages, createDraftMessage, deleteDraftMessage } from '../../redux/actions/apiActions';
+import { setNewMessage } from '../../redux/actions/FeedActions';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import DiscardModal from './DiscardModal';
 
 const SendIcon = styled(Send)(({ theme }) => ({
     '.css-155nyw6-MuiButton-endIcon>*&:nth-of-type(1)': {
@@ -26,8 +29,10 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
     }
 }))
 
-export default function NewMessage() {
-    const [newMessage, setNewMessage] = useState({
+
+function NewMessage(props) {
+    const [message, setMessage] = useState({
+        sender: "nikhil@user.com",
         to: "",
         cc: "",
         bcc: "",
@@ -35,24 +40,74 @@ export default function NewMessage() {
         body: ""
     })
 
+    const [modalOpen, setModalOpen] = useState(false)
+
+    const { newMessage,
+        setNewMessage,
+        getMessages,
+        createDraftMessage,
+        deleteDraftMessage } = props
+
+    const messageRef = useRef()
+
     const changeHandler = (e) => {
         if (e.target?.id) {
-            setNewMessage(prev => ({
+            setMessage(prev => ({
                 ...prev,
                 [e.target.id]: e.target.value
             }))
         } else {
-            setNewMessage(prev => ({
+            setMessage(prev => ({
                 ...prev,
                 body: e
             }))
         }
     }
 
+    const handleSubmit = () => {
+        createMessage(message)
+            .then(() => {
+                getMessages(112233).then(() => {
+                    setMessage({
+                        sender: "nikhil@user.com",
+                        to: "",
+                        cc: "",
+                        bcc: "",
+                        subject: "",
+                        body: ""
+                    })
+                    setNewMessage({ type: "", defaultMessage: null })
+                })
+            })
+    }
+
+    useEffect(() => {
+        messageRef.current = message
+    }, [message])
+
+    useEffect(() => {
+        if (newMessage.defaultMessage) {
+            setMessage(newMessage.defaultMessage)
+        }
+    }, [newMessage.defaultMessage])
+
+    useEffect(() => {
+        return () => {
+            if (newMessage.type) {
+                createDraftMessage(messageRef.current)
+                    .then(() => {
+                        getMessages(112233)
+                        setNewMessage({ type: "", defaultMessage: null })
+                    })
+                    .catch(err => console.log(err))
+            }
+        }
+    }, [])
+
     return (
-        <Paper sx={{ height: '474px', padding: 1 }}>
+        <Paper sx={{ height: '471px', padding: 1 }}>
             <StyledTextField
-                value={newMessage.to}
+                value={message.to}
                 onChange={changeHandler}
                 placeholder='to'
                 id='to'
@@ -63,7 +118,7 @@ export default function NewMessage() {
                 fullWidth
             />
             <StyledTextField
-                value={newMessage.cc}
+                value={message.cc}
                 onChange={changeHandler}
                 placeholder='cc'
                 id='cc'
@@ -74,7 +129,7 @@ export default function NewMessage() {
                 fullWidth
             />
             <StyledTextField
-                value={newMessage.bcc}
+                value={message.bcc}
                 onChange={changeHandler}
                 placeholder='bcc'
                 id='bcc'
@@ -85,7 +140,7 @@ export default function NewMessage() {
                 fullWidth
             />
             <StyledTextField
-                value={newMessage.subject}
+                value={message.subject}
                 onChange={changeHandler}
                 placeholder='subject'
                 id='subject'
@@ -97,7 +152,7 @@ export default function NewMessage() {
             />
             <ReactQuill
                 id='body'
-                value={newMessage.body}
+                value={message.body}
                 onChange={changeHandler}
             />
             <Stack alignItems='flex-end'>
@@ -113,6 +168,7 @@ export default function NewMessage() {
                         endIcon={<SendIcon />}
                         size='small'
                         sx={{ fontSize: '12px', height: '25px' }}
+                        onClick={handleSubmit}
                     >
                         Send
                     </Button>
@@ -122,11 +178,34 @@ export default function NewMessage() {
                         endIcon={<DeleteIcon />}
                         size='small'
                         sx={{ fontSize: '12px', height: '25px' }}
+                        onClick={() => setModalOpen(true)}
                     >
                         Disacrd
                     </Button>
                 </Stack>
+                <DiscardModal
+                    modalOpen={modalOpen}
+                    setModalOpen={setModalOpen}
+                    deleteDraftMessage={deleteDraftMessage}
+                    id={message._id}
+                    setNewMessage={setNewMessage}
+                    getMessages={getMessages}
+                />
             </Stack>
         </Paper>
     )
 }
+
+const mapStateToProps = (state) => ({
+    newMessage: state.feed.newMessage
+})
+
+const mapDispatchToProps = (dispatch) => ({
+    createMessage: val => dispatch(createMessage(val)),
+    getMessages: val => dispatch(getMessages(val)),
+    setNewMessage: val => dispatch(setNewMessage(val)),
+    createDraftMessage: val => dispatch(createDraftMessage(val)),
+    deleteDraftMessage: val => dispatch(deleteDraftMessage(val)),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(NewMessage)

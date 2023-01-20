@@ -1,6 +1,5 @@
 import { Box, CircularProgress } from '@mui/material'
 import React from 'react'
-import { useState } from 'react'
 import { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { getMessages } from '../redux/actions/apiActions'
@@ -16,6 +15,12 @@ function MainContainer(props) {
 
     useEffect(() => {
         getMessages(112233)
+            .then(() => {
+                const {messages} = props
+            })
+            .catch((err) => {
+                console.log(err)
+            })
     }, [])
 
     // useEffect(() => {

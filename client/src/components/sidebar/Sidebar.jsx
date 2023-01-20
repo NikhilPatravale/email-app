@@ -38,7 +38,7 @@ function Sidebar(props) {
           }
         </List>
         <Box sx={{ display: { xxs: 'none', md: 'block', margin: 'auto', marginBottom:'20px'} }}>
-          <Fab color="primary" onClick={() => setNewMessage('new')}>
+          <Fab color="primary" onClick={() => setNewMessage({type: "new", defaultMessage: null})}>
             <Add />
           </Fab>
         </Box>

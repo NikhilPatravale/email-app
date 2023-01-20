@@ -6,7 +6,10 @@ const defaultState = {
     header: FeedConstants.Inbox,
     list: DummyData,
     selectedMessage: null,
-    newMessage: ""
+    newMessage: {
+        type: "",
+        defaultMessage: null
+    }
 }
 
 export const feedReducer = (state = defaultState, action) => {
