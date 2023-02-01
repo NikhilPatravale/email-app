@@ -18,3 +18,17 @@ export const setNewMessage = (value) => (dispatch) => {
         payload: value
     })
 }
+
+export const setSaveAsDraft = (value) => (dispatch) => {
+    return dispatch({
+        type: Actions.SET_SAVE_AS_DRAFT,
+        payload: value
+    })
+}
+
+export const setIsForward = (value) => (dispatch) => {
+    return dispatch({
+        type: Actions.SET_IS_FORWARD,
+        payload: value
+    })
+}

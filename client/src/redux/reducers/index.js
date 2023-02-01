@@ -1,5 +1,5 @@
 import { combineReducers } from "redux"
-import { messagesReducer } from "./messagesReducer"
+import { messagesReducer } from "./MessagesReducer"
 import { feedReducer } from "./FeedReducer"
 import { sidebarReducer } from "./SidebarReducer"
 

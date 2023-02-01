@@ -1,34 +1,17 @@
-import { Box, Button, Modal, Paper, styled, TextField, Typography } from '@mui/material'
-import { Stack } from '@mui/system';
-import { Delete, Send } from '@mui/icons-material'
+import { Stack, Button, Paper, Snackbar, Alert } from '@mui/material'
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux'
-import { createMessage, getMessages, createDraftMessage, deleteDraftMessage } from '../../redux/actions/apiActions';
-import { setNewMessage } from '../../redux/actions/FeedActions';
+import { createMessage, getMessages, createDraftMessage, deleteDraftMessage } from '../../redux/actions/ApiActions';
+import { setNewMessage, setSaveAsDraft } from '../../redux/actions/FeedActions';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import DiscardModal from './DiscardModal';
-
-const SendIcon = styled(Send)(({ theme }) => ({
-    '.css-155nyw6-MuiButton-endIcon>*&:nth-of-type(1)': {
-        fontSize: '14px'
-    }
-}))
-
-const DeleteIcon = styled(Delete)(({ theme }) => ({
-    '.css-155nyw6-MuiButton-endIcon>*&:nth-of-type(1)': {
-        fontSize: '14px'
-    }
-}))
-
-const StyledTextField = styled(TextField)(({ theme }) => ({
-    height: '30px',
-    marginBottom: '10px',
-    '.css-1v0hu2-MuiInputBase-root-MuiInput-root': {
-        margin: 0
-    }
-}))
-
+import { addNewMessage, setSnackOpen } from '../../redux/actions/MessageAction';
+import { StyledTextField } from '../styledcomps/StyledTextField';
+import { SendIcon } from '../styledcomps/SendIcon';
+import { DeleteIcon } from '../styledcomps/DeleteIcon';
+import { SnackBar } from './SnackBar';
+import { Actions } from '../../constants/constants';
 
 function NewMessage(props) {
     const [message, setMessage] = useState({
@@ -43,12 +26,20 @@ function NewMessage(props) {
     const [modalOpen, setModalOpen] = useState(false)
 
     const { newMessage,
+        saveAsDraft,
+        setSaveAsDraft,
         setNewMessage,
         getMessages,
+        createMessage,
         createDraftMessage,
-        deleteDraftMessage } = props
+        deleteDraftMessage,
+        addNewMessage,
+        setSnackOpen
+    } = props
 
     const messageRef = useRef()
+    const newMessageRef = useRef()
+    const saveAsDraftRef = useRef()
 
     const changeHandler = (e) => {
         if (e.target?.id) {
@@ -65,39 +56,89 @@ function NewMessage(props) {
     }
 
     const handleSubmit = () => {
-        createMessage(message)
-            .then(() => {
-                getMessages(112233).then(() => {
-                    setMessage({
-                        sender: "nikhil@user.com",
-                        to: "",
-                        cc: "",
-                        bcc: "",
-                        subject: "",
-                        body: ""
-                    })
-                    setNewMessage({ type: "", defaultMessage: null })
+        setSaveAsDraft(false)
+        let {_id, ...formattedMessage} = message
+        console.log(formattedMessage)
+        createMessage(formattedMessage)
+            .then((res) => {
+                setSnackOpen(true)
+                setNewMessage({ type: "", defaultMessage: null })
+                addNewMessage({type: Actions.ADD_SENT_MESSAGE, message: res})
+                setMessage({
+                    sender: "nikhil@user.com",
+                    to: "",
+                    cc: "",
+                    bcc: "",
+                    subject: "",
+                    body: ""
                 })
+                // getMessages(112233).then(() => {
+                //     setMessage({
+                //         sender: "nikhil@user.com",
+                //         to: "",
+                //         cc: "",
+                //         bcc: "",
+                //         subject: "",
+                //         body: ""
+                //     })
+                // })
             })
     }
 
     useEffect(() => {
         messageRef.current = message
-    }, [message])
+        saveAsDraftRef.current = saveAsDraft
+    }, [message, saveAsDraft])
 
     useEffect(() => {
-        if (newMessage.defaultMessage) {
-            setMessage(newMessage.defaultMessage)
-        }
-    }, [newMessage.defaultMessage])
+        newMessageRef.current = newMessage
+
+        console.log('Old: ', newMessage?.defaultMessage?._id)
+        
+        if (newMessage?.defaultMessage) {
+            let body = newMessage.defaultMessage.body
+            if(newMessage?.type === 'forward'){
+                body = `
+                    <br><br><br>___________________________________________________________
+                    <br>From: nikhil@user.com
+                    <br>
+                    <br>
+                ` + newMessage.defaultMessage.body
+            }
+            setMessage({
+                ...message,
+                ...newMessage.defaultMessage,
+                body,
+                to: newMessage.defaultMessage.to?.join(";"),
+                cc: newMessage.defaultMessage.cc?.join(";"),
+                bcc: newMessage.defaultMessage.bcc?.join(";"),
+            })
+        } else setMessage({
+            sender: "nikhil@user.com",
+            to: "",
+            cc: "",
+            bcc: "",
+            subject: "",
+            body: ""
+        })
+
+    }, [newMessage?.type, newMessage?.defaultMessage])
 
     useEffect(() => {
+        setSaveAsDraft(true)
         return () => {
-            if (newMessage.type) {
-                createDraftMessage(messageRef.current)
-                    .then(() => {
-                        getMessages(112233)
-                        setNewMessage({ type: "", defaultMessage: null })
+            if (newMessageRef.current.type && saveAsDraftRef.current) {
+                let formattedMessage = {
+                    ...messageRef.current,
+                    to: messageRef.current.to.split(";"),
+                    cc: messageRef.current.cc.split(";"),
+                    bcc: messageRef.current.bcc.split(";"),
+                }
+
+                setNewMessage({ type: "", defaultMessage: null })
+                createDraftMessage(formattedMessage)
+                    .then((res) => {
+                        addNewMessage({type: Actions.ADD_DRAFT_MESSAGE, message: res})
                     })
                     .catch(err => console.log(err))
             }
@@ -190,6 +231,8 @@ function NewMessage(props) {
                     id={message._id}
                     setNewMessage={setNewMessage}
                     getMessages={getMessages}
+                    saveAsDraft={saveAsDraft}
+                    setSaveAsDraft={setSaveAsDraft}
                 />
             </Stack>
         </Paper>
@@ -197,7 +240,9 @@ function NewMessage(props) {
 }
 
 const mapStateToProps = (state) => ({
-    newMessage: state.feed.newMessage
+    newMessage: state.feed.newMessage,
+    saveAsDraft: state.feed.saveAsDraft,
+    snakOpen: state.messages.snakOpen,
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -206,6 +251,9 @@ const mapDispatchToProps = (dispatch) => ({
     setNewMessage: val => dispatch(setNewMessage(val)),
     createDraftMessage: val => dispatch(createDraftMessage(val)),
     deleteDraftMessage: val => dispatch(deleteDraftMessage(val)),
+    addNewMessage: val => dispatch(addNewMessage(val)),
+    setSaveAsDraft: val => dispatch(setSaveAsDraft(val)),
+    setSnackOpen: val => dispatch(setSnackOpen(val)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewMessage)

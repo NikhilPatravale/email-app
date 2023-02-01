@@ -1,11 +1,17 @@
-import { Divider, Drawer, List, ListItem, ListItemButton, ListItemText } from '@mui/material'
+import { Add } from '@mui/icons-material'
+import { Box, Button, Divider, Drawer, Fab, List, ListItem, ListItemButton, ListItemText } from '@mui/material'
 import React from 'react'
 import { SidebarOptions } from '../../constants/constants'
 import SidebarItem from './SidebarItem'
 
 export default function SidebarDrawer(props) {
-    
-    const {isSidebarClose, closeSidebar, selected, optionChangeHandler} = props
+
+    const { isSidebarClose, closeSidebar, selected, optionChangeHandler, setNewMessage } = props
+
+    const handleNewMessage = () => {
+        setNewMessage({ type: "new", defaultMessage: null })
+        closeSidebar(true)
+    }
 
     return (
         <Drawer
@@ -16,8 +22,9 @@ export default function SidebarDrawer(props) {
             ModalProps={{
                 keepMounted: true
             }}
+            sx={{width: '200px'}}
         >
-            <List sx={{ padding: '20px 10px 0 10px' }}>
+            <List sx={{ width: '200', padding: '20px 10px 0 10px' }}>
                 {
                     SidebarOptions.map((item, indx) => (
                         <SidebarItem
@@ -32,7 +39,7 @@ export default function SidebarDrawer(props) {
                 }
             </List>
             <Divider />
-            <List sx={{paddingLeft: 2}}>
+            <List sx={{ paddingLeft: 2 }}>
                 <ListItemButton >
                     <ListItemText primary="Messages" />
                 </ListItemButton>
@@ -43,6 +50,14 @@ export default function SidebarDrawer(props) {
                     <ListItemText primary="Settings" />
                 </ListItemButton>
             </List>
+            <Divider />
+            <Box margin='0 auto' marginTop={8}>
+                <Fab color="primary"
+                onClick={handleNewMessage}
+                >
+                    <Add />
+                </Fab>
+            </Box>
         </Drawer>
     )
 }

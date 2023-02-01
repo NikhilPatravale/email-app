@@ -1,5 +1,5 @@
 import { Actions, FeedConstants
- } from '../../constants/constants'
+} from '../../constants/constants'
 import DummyData from '../../static/dummy.json'
 
 const defaultState = {
@@ -9,11 +9,13 @@ const defaultState = {
     newMessage: {
         type: "",
         defaultMessage: null
-    }
+    },
+    saveAsDraft: true,
+    isForward: false
 }
 
 export const feedReducer = (state = defaultState, action) => {
-    switch(action.type){
+    switch (action.type) {
         case Actions.FEED_HEADER_CHANGE:
             return {
                 ...state,
@@ -22,14 +24,22 @@ export const feedReducer = (state = defaultState, action) => {
         case Actions.SELECTED_MESSAGE_CHANGE:
             return {
                 ...state,
-                selectedMessage: action.payload,
-                newMessage: ""
+                selectedMessage: action.payload
             }
         case Actions.SET_NEW_MESSAGE:
             return {
                 ...state,
                 newMessage: action.payload,
-                selectedMessage: null
+            }
+        case Actions.SET_SAVE_AS_DRAFT:
+            return {
+                ...state,
+                saveAsDraft: action.payload
+            }
+        case Actions.SET_IS_FORWARD:
+            return {
+                ...state,
+                isForward: action.payload
             }
         default:
             return state

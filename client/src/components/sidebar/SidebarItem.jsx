@@ -15,8 +15,8 @@ export default function SidebarItem(props) {
     }
 
     return (
-        <ListItem disablePadding selected={selected}>
-            <ListItemButton onClick={handleOptionChange}>
+        <ListItem disablePadding >
+            <ListItemButton onClick={handleOptionChange} selected={selected}>
                 <ListItemIcon>
                     {option === SidebarOptions[0] ? <Inbox/> : 
                     option === SidebarOptions[1] ? <Send /> :

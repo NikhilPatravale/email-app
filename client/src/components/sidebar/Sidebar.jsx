@@ -1,6 +1,6 @@
-import { Box, List, Drawer, Fab, Stack } from '@mui/material'
+import { Box, List, Fab, Stack } from '@mui/material'
 import { SidebarOptions } from '../../constants/constants'
-import { SidebarOption, SidebarDisplayChange } from '../../redux/actions/action'
+import { SidebarOption, SidebarDisplayChange } from '../../redux/actions/SidebarAction'
 import { setFeedHeader, setNewMessage } from '../../redux/actions/FeedActions'
 import React from 'react'
 import { connect } from 'react-redux'
@@ -48,6 +48,7 @@ function Sidebar(props) {
         closeSidebar={closeSidebar}
         selected={selected}
         optionChangeHandler={optionChangeHandler}
+        setNewMessage={setNewMessage}
       />
     </>
   )

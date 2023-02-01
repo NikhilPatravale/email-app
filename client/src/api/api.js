@@ -1,7 +1,6 @@
 import { BASE_URL } from "../constants/constants"
 import axios from 'axios'
 import { buildActionType } from "./actionType"
-import { DELETE } from "../constants/actionConstants"
 
 export const fetch = (endpoint, method, body, type) => async (dispatch) => {
 
@@ -11,16 +10,15 @@ export const fetch = (endpoint, method, body, type) => async (dispatch) => {
     })
 
     try {
-        await axios(BASE_URL + endpoint, {
+        let res = await axios(BASE_URL + endpoint, {
             method,
             data: body
-        }).then(res => {
-            dispatch({
-                type: actionType.SUCCESSFULL,
-                payload: res.data
-            })
-            return Promise.resolve()
         })
+        dispatch({
+            type: actionType.SUCCESSFULL,
+            payload: res.data
+        })
+        return Promise.resolve(res.data)
     } catch (err) {
         dispatch({
             type: actionType.REJECTED,

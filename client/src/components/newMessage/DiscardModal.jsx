@@ -2,18 +2,21 @@ import { Button, Modal, Stack, Typography } from '@mui/material'
 import React from 'react'
 
 export default function DiscardModal(props) {
-    const {modalOpen, setModalOpen, deleteDraftMessage, id, setNewMessage, getMessages} = props
+    const { modalOpen, setModalOpen, deleteDraftMessage, id, saveAsDraft, setSaveAsDraft, setNewMessage, getMessages } = props
 
     const handleMessageDelete = () => {
-        if(id){
+        if (id) {
             deleteDraftMessage(id)
                 .then(() => {
+                    setNewMessage({ type: "", defaultMessage: null })
                     getMessages(112233)
                 }).catch(err => {
                     console.log(err)
                 })
         }
-        // setNewMessage(null)
+        else {
+            setNewMessage({ type: "", defaultMessage: null })
+        }
     }
     return (
         <Modal
@@ -30,7 +33,10 @@ export default function DiscardModal(props) {
                         color='error'
                         size='small'
                         variant='contained'
-                        onClick={handleMessageDelete}
+                        onClick={() => {
+                            setSaveAsDraft(false)
+                            handleMessageDelete()
+                        }}
                     >
                         Delete
                     </Button>

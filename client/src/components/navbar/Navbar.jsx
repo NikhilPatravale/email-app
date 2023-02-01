@@ -3,7 +3,7 @@ import { AppBar, Avatar, IconButton, Stack, Toolbar, Typography } from '@mui/mat
 import React from 'react'
 import NavIconsGroup from '../styledcomps/NavIconsGroup'
 import SearchBar from '../styledcomps/SearchBar'
-import {SidebarDisplayChange} from '../../redux/actions/action'
+import {SidebarDisplayChange} from '../../redux/actions/SidebarAction'
 import { connect } from 'react-redux'
 
 function Navbar(props) {

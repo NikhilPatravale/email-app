@@ -7,4 +7,4 @@ export const createMessage = (data) => (dispatch) => fetch(`messages/`, POST, da
 
 export const createDraftMessage = (data) => (dispatch) => fetch(`messages/drafts`, POST, data, actions.CREATE_DRAFT_MESSAGE)(dispatch)
 
-export const deleteDraftMessage = (data) => (dispatch) => fetch(`messages/drafts/${data}`, DELETE, null, actions.DELETE_DRAFT_MESSAGE)(dispatch)
+export const deleteDraftMessage = (data) => (dispatch) => fetch(`messages/drafts/${data}`, POST, null, actions.DELETE_DRAFT_MESSAGE)(dispatch)
