@@ -27,11 +27,11 @@ function Feed(props) {
       setSelectedMessage(value)
     }
   }
-
+  
   return (
-    <Stack sx={{ flex: '2 0 20%', maxWidth:{xxxs: '100%', sm:'40%', md: '36%'}, paddingLeft: '5px', minHeight: '510px' }}>
+    <Stack sx={{ flex: '2 0 20%', maxWidth:{xxxs: '100%', sm:'40%', md: '36%'}, paddingLeft: '5px', }}>
       <Typography variant='h6'>{heading?.slice(0, 1).toUpperCase() + heading?.slice(1)}</Typography>
-      <List disablePadding sx={{ overflowY: 'auto' }}>
+      <List disablePadding sx={{ overflowY: 'auto', height:'100%' }}>
         {
           list?.map((item, indx) => {
             return <Box key={indx}>
@@ -55,9 +55,7 @@ function Feed(props) {
                           <Typography variant='body1' component='span' color='red' sx={{ fontSize: '12px' }}>[Draft]</Typography>
                           <Drafts fontSize='14px' color="action" />
                         </Stack> : null}
-                        <Typography variant='body2' sx={{ height: "40px", overflow: 'hidden', fontWeight: 100}}>
-                          <div className="dangerouslySetHTML" style={{margin:0}} dangerouslySetInnerHTML={{__html: item.body}}></div>
-                        </Typography>
+                        <div className="dangerouslySetHTML" dangerouslySetInnerHTML={{__html: item.body}}></div>
                       </>
                     } />
                 </ListItem>

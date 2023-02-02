@@ -25,10 +25,3 @@ export const setSaveAsDraft = (value) => (dispatch) => {
         payload: value
     })
 }
-
-export const setIsForward = (value) => (dispatch) => {
-    return dispatch({
-        type: Actions.SET_IS_FORWARD,
-        payload: value
-    })
-}

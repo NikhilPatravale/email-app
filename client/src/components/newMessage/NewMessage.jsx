@@ -1,7 +1,7 @@
-import { Stack, Button, Paper, Snackbar, Alert } from '@mui/material'
+import { Stack, Button, Paper } from '@mui/material';
 import React, { useState, useEffect, useRef } from 'react';
-import { connect } from 'react-redux'
-import { createMessage, getMessages, createDraftMessage, deleteDraftMessage } from '../../redux/actions/ApiActions';
+import { connect } from 'react-redux';
+import { createMessage, getMessages, createDraftMessage, deleteMessage } from '../../redux/actions/ApiActions';
 import { setNewMessage, setSaveAsDraft } from '../../redux/actions/FeedActions';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -10,8 +10,7 @@ import { addNewMessage, setSnackOpen } from '../../redux/actions/MessageAction';
 import { StyledTextField } from '../styledcomps/StyledTextField';
 import { SendIcon } from '../styledcomps/SendIcon';
 import { DeleteIcon } from '../styledcomps/DeleteIcon';
-import { SnackBar } from './SnackBar';
-import { Actions } from '../../constants/constants';
+import { Actions, SnackMessages, SnackType } from '../../constants/constants';
 
 function NewMessage(props) {
     const [message, setMessage] = useState({
@@ -32,7 +31,7 @@ function NewMessage(props) {
         getMessages,
         createMessage,
         createDraftMessage,
-        deleteDraftMessage,
+        deleteMessage,
         addNewMessage,
         setSnackOpen
     } = props
@@ -57,13 +56,16 @@ function NewMessage(props) {
 
     const handleSubmit = () => {
         setSaveAsDraft(false)
-        let {_id, ...formattedMessage} = message
-        console.log(formattedMessage)
+        let { _id, ...formattedMessage } = message
         createMessage(formattedMessage)
             .then((res) => {
-                setSnackOpen(true)
+                setSnackOpen({
+                    open: true,
+                    message: SnackMessages.sent,
+                    type: SnackType.success
+                })
                 setNewMessage({ type: "", defaultMessage: null })
-                addNewMessage({type: Actions.ADD_SENT_MESSAGE, message: res})
+                addNewMessage({ type: Actions.ADD_SENT_MESSAGE, message: res })
                 setMessage({
                     sender: "nikhil@user.com",
                     to: "",
@@ -72,17 +74,31 @@ function NewMessage(props) {
                     subject: "",
                     body: ""
                 })
-                // getMessages(112233).then(() => {
-                //     setMessage({
-                //         sender: "nikhil@user.com",
-                //         to: "",
-                //         cc: "",
-                //         bcc: "",
-                //         subject: "",
-                //         body: ""
-                //     })
-                // })
             })
+    }
+
+    const handleMessageDelete = (id) => {
+        if (id) {
+            deleteMessage(id)
+                .then(() => {
+                    addNewMessage({
+                        type: Actions.ADD_DELETED_MESSAGE,
+                        message,
+                        from: 'drafts'
+                    })
+                    setNewMessage({ type: "", defaultMessage: null })
+                    setSnackOpen({
+                        open: true,
+                        message: SnackMessages.deleted,
+                        type: SnackType.warning
+                    })
+                }).catch(err => {
+                    console.log(err)
+                })
+        }
+        else {
+            setNewMessage({ type: "", defaultMessage: null })
+        }
     }
 
     useEffect(() => {
@@ -92,12 +108,9 @@ function NewMessage(props) {
 
     useEffect(() => {
         newMessageRef.current = newMessage
-
-        console.log('Old: ', newMessage?.defaultMessage?._id)
-        
         if (newMessage?.defaultMessage) {
             let body = newMessage.defaultMessage.body
-            if(newMessage?.type === 'forward'){
+            if (newMessage?.type === 'forward') {
                 body = `
                     <br><br><br>___________________________________________________________
                     <br>From: nikhil@user.com
@@ -138,7 +151,7 @@ function NewMessage(props) {
                 setNewMessage({ type: "", defaultMessage: null })
                 createDraftMessage(formattedMessage)
                     .then((res) => {
-                        addNewMessage({type: Actions.ADD_DRAFT_MESSAGE, message: res})
+                        addNewMessage({ type: Actions.ADD_DRAFT_MESSAGE, message: res })
                     })
                     .catch(err => console.log(err))
             }
@@ -227,11 +240,8 @@ function NewMessage(props) {
                 <DiscardModal
                     modalOpen={modalOpen}
                     setModalOpen={setModalOpen}
-                    deleteDraftMessage={deleteDraftMessage}
+                    handleMessageDelete={handleMessageDelete}
                     id={message._id}
-                    setNewMessage={setNewMessage}
-                    getMessages={getMessages}
-                    saveAsDraft={saveAsDraft}
                     setSaveAsDraft={setSaveAsDraft}
                 />
             </Stack>
@@ -250,7 +260,7 @@ const mapDispatchToProps = (dispatch) => ({
     getMessages: val => dispatch(getMessages(val)),
     setNewMessage: val => dispatch(setNewMessage(val)),
     createDraftMessage: val => dispatch(createDraftMessage(val)),
-    deleteDraftMessage: val => dispatch(deleteDraftMessage(val)),
+    deleteMessage: val => dispatch(deleteMessage(val)),
     addNewMessage: val => dispatch(addNewMessage(val)),
     setSaveAsDraft: val => dispatch(setSaveAsDraft(val)),
     setSnackOpen: val => dispatch(setSnackOpen(val)),

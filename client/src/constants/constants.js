@@ -32,4 +32,16 @@ export const FeedConstants = {
 
 export const SidebarOptions = ['Inbox', 'Sent', 'Drafts', 'Deleted', 'Spam']
 
+export const MessageOptions = ['Attach File', 'Mark as unread', 'Delete message']
+
+export const SnackMessages = {
+    sent: 'Message Sent',
+    deleted: 'Message Deleted'
+}
+
+export const SnackType = {
+    success: 'success',
+    warning: 'warning'
+}
+
 export const BASE_URL = "http://localhost:8200/email/api/"

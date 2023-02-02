@@ -10,9 +10,20 @@ dotenv.config()
 const PORT = process.env.PORT || 8200
 const app = express()
 
-mongoose.connect(process.env.MONGO_URL, (err) => {
-    if(err) console.log(err)
-    else console.log('MongoDB connected')
+const connectMongo = async () => {
+    try{
+        await mongoose.connect(process.env.MONGO_URL)
+    }catch(err){
+        throw err
+    }
+}
+
+mongoose.connection.on('disconnected', () => {
+    console.log('MongoDB disconnected :(')
+})
+
+mongoose.connection.on('connected', () => {
+    console.log('MongoDB connected :)')
 })
 
 app.use(express.json())
@@ -27,5 +38,6 @@ app.use("/email/api/messages", messageRoute)
 
 
 app.listen(PORT, () => {
+    connectMongo()
     console.log('Your app is live on PORT ' + PORT)
 })

@@ -1,9 +1,9 @@
 import { Actions } from "../../constants/constants"
 
-export const addNewMessage = ({type, message}) => (dispatch) => {
+export const addNewMessage = ({type, message, from=''}) => (dispatch) => {
     return dispatch({
         type,
-        payload: message
+        payload: {message, from}
     })
 }
 

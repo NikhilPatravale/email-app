@@ -7,20 +7,16 @@ import { setSnackOpen } from '../redux/actions/MessageAction'
 import Feed from './feed/Feed'
 import MessageContainer from './message-container/MessageContainer'
 import Navbar from './navbar/Navbar'
-import SnackBar from './newMessage/SnackBar'
+import SnackBar from './Snackbar/SnackBar'
 import Sidebar from './sidebar/Sidebar'
 import CustomStackWrapper from './styledcomps/CustomStackWrapper'
 
 function MainContainer(props) {
-    const { messages, getMessages, snackOpen, setSnackOpen } = props
+    const { messages, getMessages } = props
     const { loading } = messages
 
     useEffect(() => {
         getMessages(112233)
-            .then(() => {
-                const { messages } = props
-                console.log(messages)
-            })
             .catch((err) => {
                 console.log(err)
             })

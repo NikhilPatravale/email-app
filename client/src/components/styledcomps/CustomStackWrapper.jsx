@@ -6,7 +6,7 @@ const StyledStackWrapper = styled(Stack)(({theme}) => ({
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 10,
-    maxHeight: 'calc(100vh - 70px)',
+    height: '507px',
     alignSelf:'start'
 }))
 

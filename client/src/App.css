@@ -24,7 +24,8 @@
     border-top: 1px solid gray;
 }
 
-.dangerouslySetHTML>p{
+.dangerouslySetHTML{
     margin: 0;
     max-height: 40px;
+    overflow: hidden;
 }

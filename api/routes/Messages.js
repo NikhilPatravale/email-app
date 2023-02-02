@@ -75,7 +75,7 @@ router.post("/drafts", async (req, res) => {
     }
 })
 
-router.post("/drafts/:id", async (req, res) => {
+router.post("/delete/:id", async (req, res) => {
     try {
         let id = req.params.id
         if (id) {

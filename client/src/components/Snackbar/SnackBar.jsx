@@ -9,7 +9,8 @@ function SlideTransition(props) {
 
 function SnackBar(props) {
 
-    const { open, setOpen } = props
+    const { snack, setOpen } = props
+    const { open, message, type } = snack
 
     return (
         <Snackbar
@@ -19,15 +20,15 @@ function SnackBar(props) {
             elevation={15}
             open={open}
             onClose={() => setOpen(false)}>
-            <Alert variant="filled" severity="success" onClose={() => setOpen(false)} >
-                Message sent
+            <Alert variant="filled" severity={type} onClose={() => setOpen(false)} >
+                {message}
             </Alert>
         </Snackbar>
     )
 }
 
 const mapStateToProps = (state) => ({
-    open: state.messages.snackOpen
+    snack: state.messages.snackOpen
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -35,4 +36,3 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SnackBar)
-
