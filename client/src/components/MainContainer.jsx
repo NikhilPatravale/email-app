@@ -10,12 +10,17 @@ import Navbar from './navbar/Navbar'
 import SnackBar from './Snackbar/SnackBar'
 import Sidebar from './sidebar/Sidebar'
 import CustomStackWrapper from './styledcomps/CustomStackWrapper'
+import { setUserContext } from '../redux/actions/UserContextAction'
 
 function MainContainer(props) {
-    const { messages, getMessages } = props
+    const { messages, getMessages, setUserContext } = props
     const { loading } = messages
 
     useEffect(() => {
+        setUserContext({
+            id: 112233,
+            email: 'nikhil@user.com'
+        })
         getMessages(112233)
             .catch((err) => {
                 console.log(err)
@@ -43,12 +48,13 @@ function MainContainer(props) {
 
 const mapStateToProps = (state) => ({
     messages: state.messages,
-    snackOpen: state.messages.snackOpen
+    snackOpen: state.messages.snackOpen,
 })
 
 const mapDispatchToProps = (dispatch) => ({
     getMessages: value => dispatch(getMessages(value)),
     setSnackOpen: val => dispatch(setSnackOpen(val)),
+    setUserContext: val => dispatch(setUserContext(val)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainContainer)

@@ -13,6 +13,10 @@ export const Actions = {
     SIDEBAR_DISPLAY_CHANGE: 'SIDEBAR_DISPLAY_CHANGE',
     SET_NEW_MESSAGE: 'SET_NEW_MESSAGE',
     SET_DEFAULT_NEW_MESSAGE: 'SET_DEFAULT_NEW_MESSAGE',
+    GET_INBOX_MESSAGES: 'GET_INBOX_MESSAGES',
+    CREATE_INBOX_MESSAGE: 'CREATE_INBOX_MESSAGE',
+    CREATE_DRAFT_MESSAGE: 'CREATE_DRAFT_MESSAGE',
+    DELETE_MESSAGE: 'DELETE_MESSAGE',
     ADD_DRAFT_MESSAGE: 'ADD_DRAFT_MESSAGE',
     ADD_SENT_MESSAGE: 'ADD_SENT_MESSAGE',
     ADD_INBOX_MESSAGE: 'ADD_INBOX_MESSAGE',
@@ -20,6 +24,13 @@ export const Actions = {
     SET_SAVE_AS_DRAFT: 'SET_SAVE_AS_DRAFT',
     SET_IS_FORWARD: 'SET_IS_FORWARD',
     SET_SNACK_OPEN: 'SET_SNACK_OPEN',
+    SET_USER_CONTEXT: 'SET_USER_CONTEXT'
+}
+
+export const RequestMethod = {
+    GET: 'GET',
+    POST: 'POST',
+    DELETE: 'DELETE',
 }
 
 export const FeedConstants = {
@@ -44,4 +55,4 @@ export const SnackType = {
     warning: 'warning'
 }
 
-export const BASE_URL = "http://localhost:8200/email/api/"
+export const BASE_URL = 'http://localhost:8200/email/api/'

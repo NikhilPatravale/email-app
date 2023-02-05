@@ -57,7 +57,7 @@ router.post("/drafts", async (req, res) => {
         if (req.body._id) {
             let draftId = await DraftModel.findById(req.body._id)
             if(draftId){
-                draft = await DraftModel.findByIdAndUpdate(req.body._id, req.body)
+                draft = await DraftModel.findByIdAndUpdate(req.body._id, req.body, {returnDocument:'after'})
                 return res.status(200).json(draft)
             } else {
                 let {_id, ...other} = req.body

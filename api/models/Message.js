@@ -24,11 +24,10 @@ const MessageSchema = new mongoose.Schema({
     },
     body: {
         type: String,
-        required: true
     },
     deleted: {
         type: Boolean,
     }
-}, {timestamps: true})
+}, { timestamps: true })
 
 module.exports = mongoose.model("Message", MessageSchema)

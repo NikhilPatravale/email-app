@@ -2,7 +2,7 @@ import { Stack, Button, Paper } from '@mui/material';
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import { createMessage, getMessages, createDraftMessage, deleteMessage } from '../../redux/actions/ApiActions';
-import { setNewMessage, setSaveAsDraft } from '../../redux/actions/FeedActions';
+import { setNewMessage, setSaveAsDraft, setSelectedMessage } from '../../redux/actions/FeedActions';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import DiscardModal from './DiscardModal';
@@ -33,7 +33,9 @@ function NewMessage(props) {
         createDraftMessage,
         deleteMessage,
         addNewMessage,
-        setSnackOpen
+        setSnackOpen,
+        user,
+        setSelectedMessage
     } = props
 
     const messageRef = useRef()
@@ -56,7 +58,7 @@ function NewMessage(props) {
 
     const handleSubmit = () => {
         setSaveAsDraft(false)
-        let { _id, ...formattedMessage } = message
+        let { _id, ...formattedMessage } = message, from = ''
         createMessage(formattedMessage)
             .then((res) => {
                 setSnackOpen({
@@ -65,7 +67,11 @@ function NewMessage(props) {
                     type: SnackType.success
                 })
                 setNewMessage({ type: "", defaultMessage: null })
-                addNewMessage({ type: Actions.ADD_SENT_MESSAGE, message: res })
+                setSelectedMessage(null)
+
+                if(res.to?.concat(res.cc, res.bcc).includes(user.email)) from = 'self'
+
+                addNewMessage({ type: Actions.ADD_SENT_MESSAGE, message: res, from })
                 setMessage({
                     sender: "nikhil@user.com",
                     to: "",
@@ -74,6 +80,8 @@ function NewMessage(props) {
                     subject: "",
                     body: ""
                 })
+            }).catch(err => {
+                let errors = Object.entries(err)
             })
     }
 
@@ -87,6 +95,7 @@ function NewMessage(props) {
                         from: 'drafts'
                     })
                     setNewMessage({ type: "", defaultMessage: null })
+                    setSelectedMessage(null)
                     setSnackOpen({
                         open: true,
                         message: SnackMessages.deleted,
@@ -223,6 +232,7 @@ function NewMessage(props) {
                         size='small'
                         sx={{ fontSize: '12px', height: '25px' }}
                         onClick={handleSubmit}
+                        disabled={!(message.subject && message.to)}
                     >
                         Send
                     </Button>
@@ -253,6 +263,7 @@ const mapStateToProps = (state) => ({
     newMessage: state.feed.newMessage,
     saveAsDraft: state.feed.saveAsDraft,
     snakOpen: state.messages.snakOpen,
+    user: state.userContext.user,
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -264,6 +275,7 @@ const mapDispatchToProps = (dispatch) => ({
     addNewMessage: val => dispatch(addNewMessage(val)),
     setSaveAsDraft: val => dispatch(setSaveAsDraft(val)),
     setSnackOpen: val => dispatch(setSnackOpen(val)),
+    setSelectedMessage: val => dispatch(setSelectedMessage(val)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewMessage)

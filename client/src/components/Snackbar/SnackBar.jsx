@@ -19,7 +19,7 @@ function SnackBar(props) {
             autoHideDuration={5000}
             elevation={15}
             open={open}
-            onClose={() => setOpen(false)}>
+            onClose={() => setOpen({open: false, message: '', type})}>
             <Alert variant="filled" severity={type} onClose={() => setOpen(false)} >
                 {message}
             </Alert>

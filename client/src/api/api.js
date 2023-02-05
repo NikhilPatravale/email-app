@@ -9,8 +9,10 @@ export const fetch = (endpoint, method, body, type) => async (dispatch) => {
         type: actionType.FETCHING
     })
 
+    let res
+
     try {
-        let res = await axios(BASE_URL + endpoint, {
+        res = await axios(BASE_URL + endpoint, {
             method,
             data: body
         })
@@ -22,8 +24,8 @@ export const fetch = (endpoint, method, body, type) => async (dispatch) => {
     } catch (err) {
         dispatch({
             type: actionType.REJECTED,
-            payload: err
+            payload: err.response.data.errors
         })
-        return Promise.reject(err)
+        return Promise.reject(err.response.data.errors)
     }
 }

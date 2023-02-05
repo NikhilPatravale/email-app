@@ -1,9 +1,9 @@
-import { actions } from "../constants/actionConstants"
+import { Actions } from "../constants/constants"
 
 export const buildActionType = (type) => {
     return {
-        FETCHING: `${actions[type]}.FETCHING`,
-        SUCCESSFULL: `${actions[type]}.SUCCESSFULL`,
-        REJECTED: `${actions[type]}.REJECTED`,
+        FETCHING: `${Actions[type]}.FETCHING`,
+        SUCCESSFULL: `${Actions[type]}.SUCCESSFULL`,
+        REJECTED: `${Actions[type]}.REJECTED`,
     }
 }

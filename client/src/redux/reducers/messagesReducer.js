@@ -1,4 +1,3 @@
-import { actions } from '../../constants/actionConstants'
 import { Actions } from '../../constants/constants'
 
 const initialState = {
@@ -20,18 +19,18 @@ const initialState = {
 
 export const messagesReducer = (state = initialState, action) => {
     switch (action.type) {
-        case `${actions.GET_INBOX_MESSAGES}.FETCHING`:
+        case `${Actions.GET_INBOX_MESSAGES}.FETCHING`:
             return {
                 ...state,
                 loading: true
             }
-        case `${actions.GET_INBOX_MESSAGES}.SUCCESSFULL`:
+        case `${Actions.GET_INBOX_MESSAGES}.SUCCESSFULL`:
             return {
                 ...state,
                 loading: false,
                 messages: action.payload
             }
-        case `${actions.GET_INBOX_MESSAGES}.REJECTED`:
+        case `${Actions.GET_INBOX_MESSAGES}.REJECTED`:
             return {
                 ...state,
                 loading: false,
@@ -39,15 +38,15 @@ export const messagesReducer = (state = initialState, action) => {
             }
         case Actions.ADD_DRAFT_MESSAGE:
             let updatedDrafts,
-                newMessage = state.messages.drafts.find(m => m._id === action.payload.message._id)
-
+                newMessage = state.messages.drafts.find(m => m._id === action.payload.message._id),
+                msg = action.payload.message
             if (newMessage) {
                 updatedDrafts = state.messages.drafts.map((item) => {
-                    if (item._id === action.payload._id) return action.payload.message
+                    if (item._id === msg._id) return msg
                     else return item
                 })
             } else {
-                updatedDrafts = [...state.messages.drafts, action.payload.message]
+                updatedDrafts = [...state.messages.drafts, msg]
             }
 
             return {
@@ -58,10 +57,12 @@ export const messagesReducer = (state = initialState, action) => {
                 }
             }
         case Actions.ADD_SENT_MESSAGE:
+            let updatedInbox = action.payload.from === 'self' ? [...state.messages.inbox, action.payload.message] : state.messages.inbox
             return {
                 ...state,
                 messages: {
                     ...state.messages,
+                    inbox: updatedInbox,
                     sent: [...state.messages.sent, action.payload.message]
                 }
             }
@@ -102,7 +103,7 @@ export const messagesReducer = (state = initialState, action) => {
                         deleted: [...state.messages.deleted, message]
                     }
                 }
-            }
+            } 
         case Actions.SET_SNACK_OPEN:
             return {
                 ...state,
